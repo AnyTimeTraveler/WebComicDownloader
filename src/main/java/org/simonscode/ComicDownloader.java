@@ -22,7 +22,7 @@ public class ComicDownloader {
 
     public static void main(String[] args) {
         if (args.length != 5) {
-            System.out.println("Usage: cdl [link to first page] [link to second page] [lik to most recent page] [link to first image location] [target location for cbz file]");
+            System.out.println("Usage: cdl [link to first page] [link to second page] [link to most recent page] [link to first image location] [target location for cbz file]");
             return;
         }
 
