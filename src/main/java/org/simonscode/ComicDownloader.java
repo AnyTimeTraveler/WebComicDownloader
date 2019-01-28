@@ -5,7 +5,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,33 +18,17 @@ import java.util.zip.ZipOutputStream;
 public class ComicDownloader {
 
     private static final int MAX_PROGRESS = 30;
+    private static Config config;
 
     public static void main(String[] args) {
-        if (args.length != 5) {
-            System.out.println("Usage: cdl [link to first page] [link to second page] [link to most recent page] [link to first image location] [target location for cbz file]");
-            return;
-        }
-
-        // process parameters
-        String firstPage = args[0];
-        String secondPage = args[1];
-        String lastPage = args[2];
-        String firstImageLocation = args[3];
-        String storageLocation = args[4];
-
-
-        URL firstUrl;
-        URL secondURL;
-        URL lastUrl;
         try {
-            firstUrl = new URL(firstPage);
-            secondURL = new URL(secondPage);
-            lastUrl = new URL(lastPage);
-        } catch (MalformedURLException e) {
+            config = Config.parse(args);
+        } catch (
+                MalformedURLException e) {
             System.err.println("Could not understand URL's, aborting.");
             return;
         }
-        File cbzFile = new File(storageLocation);
+
 
         // check if download folder exists
         ZipOutputStream out;
@@ -151,7 +134,7 @@ public class ComicDownloader {
 
                 // get next link from button
                 Elements nextButton = doc.select(cssSelectorNextPageButton);
-                if (nextButton.isEmpty() || nextPageURL.equals(lastUrl)) {
+                if (nextButton.isEmpty()) {
                     System.out.printf("%nNo next-button found, that must mean I'm done!%n%n");
                     break;
                 }
@@ -192,7 +175,7 @@ public class ComicDownloader {
      */
     private static URL getUrlFromLink(URL baseURL, String link) throws MalformedURLException {
 
-        String strippedLink = link;
+        String strippedLink = link.replaceAll(" ", "%20");
         while (strippedLink.charAt(0) == '/') {
             strippedLink = strippedLink.substring(1);
         }
